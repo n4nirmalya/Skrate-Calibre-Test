@@ -27,6 +27,7 @@ export class UserService {
 
   async findRandomUser():Promise<string>{
     const user =  await this.UserModel.find()
+    //generate a random number from 0 to length of the array less then our else stack overflow error you will get
     const randomNumber = Math.floor(Math.random() * ((user.length-1) - 0 + 1)) + 0
     return user[randomNumber].username
   }
