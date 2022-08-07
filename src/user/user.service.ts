@@ -16,12 +16,12 @@ export class UserService {
     return new Promise(async (resolve,reject) => {
       const isUserExits = await this.UserModel.findOne({username:CreateUserDto.username})
       if(isUserExits){
-        return resolve({message:"user already exits"})
+        return resolve({statusCode:409,data:{message:"user already exits"}})
       }
       const createdUser = new this.UserModel(CreateUserDto);
       const user:User = await createdUser.save();
-      const token = await this.authService.token(user.username,user.role)
-      return resolve(token)
+      const {access_token} = await this.authService.token(user.username,user.role)
+      return resolve({statusCode:200,data:{access_token}})
     })
   }
 

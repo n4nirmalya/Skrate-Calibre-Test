@@ -38,7 +38,12 @@ export class TicketService {
     if(user.role === ROLE.ADMIN || user.username === ticket.assignedTo){
       const ticketPriority = this.getPriority(ticket.priority)
       console.log('ticketPriority', ticketPriority)
-      const priorityJobs = await this.TicketModel.find({priority:ticketPriority,_id:{$ne:closeTicketDto.ticketId},assignedTo:ticket.assignedTo,status:{$ne:"close"}})
+      const priorityJobs = await this.TicketModel.find({
+        priority:ticketPriority,
+        _id:{$ne:closeTicketDto.ticketId},
+        assignedTo:ticket.assignedTo,
+        status:{$ne:"close"}
+      })
       if(priorityJobs.length){
         return{
           statusCode:403,
