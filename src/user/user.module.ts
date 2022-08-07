@@ -1,0 +1,18 @@
+import { Module } from '@nestjs/common';
+import { UserController } from './user.controller';
+import { UserService } from './user.service';
+import { userProviders } from './user.providers';
+import { DatabaseModule } from '../shared/database/database.module';
+import { AuthModule } from 'src/shared/auth/auth.module';
+import { TicketModule } from 'src/ticket/ticket.module';
+
+@Module({
+  imports: [DatabaseModule,AuthModule],
+  controllers: [UserController],
+  providers: [
+    UserService,
+    ...userProviders,
+  ],
+  exports:[UserService]
+})
+export class UserModule {}
