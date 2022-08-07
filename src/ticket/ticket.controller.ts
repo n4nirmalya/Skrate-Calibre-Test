@@ -18,8 +18,9 @@ export class TicketController {
     async create(@Body() createTicketDTO: CreateTicketDto,@Res() res: Response, @Req() req: Request) {
         const user:any = req.user;
         if(user.role === ROLE.ADMIN){
-            const ticket =  await this.ticketService.create(createTicketDTO);
-            return res.send(ticket)
+            const ticket:any =  await this.ticketService.create(createTicketDTO);
+            res.status(ticket.statusCode)
+            return res.send(ticket.data)
         }
         res.status(400)
         return res.json({message:"unauthorized"})
@@ -28,12 +29,14 @@ export class TicketController {
     @Get('all')
     async findAll(@Res() res: Response, @Req() req: Request) {
         const tickets = await this.ticketService.findAll();
-        return res.send(tickets)
+        res.status(tickets.statusCode)
+        return res.send(tickets.data)
     }
     @Get()
     async find(@Query() findTicketQuery:FindByPriorityDto | FindByStatusDto | FindByTitleDto,@Res() res: Response, @Req() req: Request){
-        const ticket = this.ticketService.findByQuery(findTicketQuery)
-        return res.send(ticket)
+        const ticket = await this.ticketService.findByQuery(findTicketQuery)
+        res.status(ticket.statusCode)
+        return res.send(ticket.data)
     }
 
     @UseGuards(JwtAuthGuard)

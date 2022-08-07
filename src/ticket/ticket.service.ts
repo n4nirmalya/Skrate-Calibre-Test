@@ -18,19 +18,33 @@ export class TicketService {
 
   async create(createTicketDto: CreateTicketDto){
     return new Promise(async (resolve,reject) => {
+      try {
         const assignedTo = await this.userService.findRandomUser()
-        const createdTicket = new this.TicketModel({assignedTo,...createTicketDto});
-        const ticket:Ticket = await createdTicket.save();
-        resolve({ticketId:ticket._id})
+        const createdTicket = new this.TicketModel({ assignedTo, ...createTicketDto });
+        const ticket: Ticket = await createdTicket.save();
+        resolve({statusCode:200,data:{ticketId: ticket._id} })
+      } catch (error) {
+        resolve({statusCode:500,data:{message:error?.message || "server error"}})
+      }
     })
   }
 
-  async findAll(): Promise<Ticket[]> {
-    return this.TicketModel.find().exec();
+  async findAll(): Promise<any> {
+    try {
+      const tickets = await this.TicketModel.find().exec();
+      return {statusCode:200,data:{tickets}}
+    } catch (error) {
+      return { statusCode: 500, data: { message:error?.message || 'server error' } }
+    }
   }
 
-  async findByQuery(query:FindByPriorityDto | FindByStatusDto | FindByTitleDto | FindById): Promise<Ticket[]> {
-    return this.TicketModel.find(query).exec();
+  async findByQuery(query:FindByPriorityDto | FindByStatusDto | FindByTitleDto | FindById): Promise<any> {
+    try {
+      const tickets = await this.TicketModel.find(query).exec();
+      return { statusCode: 200, data: { tickets } }
+    } catch (error) {
+      return { statusCode: 500, data: { message: error?.message || 'server error' } }
+    }
   }
 
   async update(closeTicketDto:CloseTicketDto,user:any):Promise<any>{
@@ -85,6 +99,11 @@ export class TicketService {
   }
 
   async delete(deleteTicketDto:DeleteTicketDto):Promise<any>{
-    return await this.TicketModel.deleteOne(deleteTicketDto)
+    try {
+      const tickets = await this.TicketModel.deleteOne(deleteTicketDto);
+      return { statusCode: 200, data: { tickets } }
+    } catch (error) {
+      return { statusCode: 500, data: { message: error?.message || 'server error' } }
+    }
   }
 }
